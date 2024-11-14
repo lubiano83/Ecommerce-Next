@@ -1,11 +1,15 @@
+"use client";
 import React from 'react';
 
-const ProfileData = () => {
+const ProfileData = async({ id }) => {
+
+  const user = await fetch(`http:localhost:3000/api/auth/users/${id}`, { cache: "no-cache" }).then(res => res.json());
+
   return (
     <div>
-        Aca van los datos del usuario
+    
     </div>
-  )
-}
+  );
+};
 
 export default ProfileData;

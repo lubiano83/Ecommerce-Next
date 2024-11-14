@@ -1,14 +1,21 @@
 "use client";
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({children}) => {
-
+export const AuthProvider = ({ children }) => {
     const router = useRouter();
-    const [ logged, setLogged ] = useState(false)
+    const [logged, setLogged] = useState(false);
+
+    // Comprobar el token al montar el componente
+    useEffect(() => {
+        const token = Cookies.get('coderCookieToken');
+        if (token) {
+            setLogged(true);
+        }
+    }, []);
 
     const [formValues, setFormValues] = useState({
         first_name: '',
@@ -20,8 +27,8 @@ export const AuthProvider = ({children}) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormValues({
-        ...formValues,
-        [name]: value,
+            ...formValues,
+            [name]: value,
         });
     };
 
@@ -29,32 +36,32 @@ export const AuthProvider = ({children}) => {
         e.preventDefault();
     
         const formData = {
-        first_name: formValues.first_name,
-        last_name: formValues.last_name,
-        email: formValues.email,
-        password: formValues.password,
+            first_name: formValues.first_name,
+            last_name: formValues.last_name,
+            email: formValues.email,
+            password: formValues.password,
         };
     
         try {
-        const response = await fetch('http://localhost:3000/api/auth/register', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json', // Indica que estamos enviando JSON
-            },
-            body: JSON.stringify(formData), // Serializa los datos a JSON
-        });
+            const response = await fetch('http://localhost:3000/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
     
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Error en el registro del usuario');
-        }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error en el registro del usuario');
+            }
     
-        const result = await response.json();
-        alert('Usuario registrado con éxito');
-        setFormValues({ first_name: '', last_name: '', email: '', password: '' }); // Reinicia el formulario
-        router.push("/views/auth/login");
+            const result = await response.json();
+            alert('Usuario registrado con éxito');
+            setFormValues({ first_name: '', last_name: '', email: '', password: '' });
+            router.push("/views/auth/login");
         } catch (error) {
-        alert(`Error al registrar el usuario: ${error.message}`);
+            alert(`Error al registrar el usuario: ${error.message}`);
         }
     };
 
@@ -71,9 +78,9 @@ export const AuthProvider = ({children}) => {
                 method: 'POST',
                 credentials: "include",
                 headers: {
-                    'Content-Type': 'application/json', // Indica que estamos enviando JSON
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData), // Serializa los datos a JSON
+                body: JSON.stringify(formData),
             });
     
             if (!response.ok) {
@@ -83,16 +90,16 @@ export const AuthProvider = ({children}) => {
     
             const result = await response.json();
             
-            // Guarda el token en una cookie usando js-cookie
+            // Guarda el token en una cookie y actualiza el estado de logged
             Cookies.set('coderCookieToken', result.token, {
-                expires: 1, // Expira en 1 día, ajusta según sea necesario
-                secure: process.env.NODE_ENV === 'production', // Solo en HTTPS en producción
+                expires: 1,
+                secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
                 path: '/'
             });
-            setLogged(true)
+            setLogged(true);
             alert('Inicio de sesión exitoso');
-            setFormValues({ email: '', password: '' }); // Reinicia el formulario
+            setFormValues({ email: '', password: '' });
             router.push("/");
         } catch (error) {
             alert(`Error al iniciar sesión: ${error.message}`);
@@ -101,7 +108,6 @@ export const AuthProvider = ({children}) => {
 
     const userLogout = async () => {
         try {
-            // Obtén el token desde la cookie
             const token = Cookies.get("coderCookieToken");
 
             const response = await fetch('/api/auth/users', {
@@ -109,14 +115,14 @@ export const AuthProvider = ({children}) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                credentials: 'include', // Envía cookies con la solicitud
-                body: JSON.stringify({ token }), // Envía el token en el cuerpo
+                credentials: 'include',
+                body: JSON.stringify({ token }),
             });
 
             if (response.ok) {
-                setLogged(false)
-                Cookies.remove("coderCookieToken"); // Elimina el token de la cookie local
-                router.push('/'); // Redirige al usuario a la página de inicio de sesión
+                setLogged(false);
+                Cookies.remove("coderCookieToken");
+                router.push('/'); // Redirige al usuario a la página de inicio
             } else {
                 const errorData = await response.json();
                 alert(`Error al cerrar sesión: ${errorData.message}`);
@@ -131,5 +137,5 @@ export const AuthProvider = ({children}) => {
         <AuthContext.Provider value={{ userRegister, userLogin, userLogout, handleChange, formValues, logged }}>
             {children}
         </AuthContext.Provider>
-    )
+    );
 };
