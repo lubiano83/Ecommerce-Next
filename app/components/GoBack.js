@@ -5,7 +5,7 @@ import Button from './Button';
 
 const GoBack = () => {
   const router = useRouter();
-
+  
   const goBack = () => {
     router.back();
   };
