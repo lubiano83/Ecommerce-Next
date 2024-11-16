@@ -7,15 +7,25 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const router = useRouter();
-    const [logged, setLogged] = useState(false);
+    const [token, setToken] = useState(null);
 
-    // Comprobar el token al montar el componente
     useEffect(() => {
-        const token = Cookies.get('coderCookieToken');
-        if (token) {
-            setLogged(true);
+        const storedToken = Cookies.get('coderCookieToken');
+        if (storedToken) {
+            setToken(storedToken);
+        } else {
+            userLogout();
         }
-    }, []);
+
+        const intervalId = setInterval(() => {
+            const currentToken = Cookies.get('coderCookieToken');
+            if (!currentToken && token) {
+                userLogout();
+            }
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [token]);
 
     const [formValues, setFormValues] = useState({
         first_name: '',
@@ -90,14 +100,13 @@ export const AuthProvider = ({ children }) => {
     
             const result = await response.json();
             
-            // Guarda el token en una cookie y actualiza el estado de logged
             Cookies.set('coderCookieToken', result.token, {
                 expires: 1,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
                 path: '/'
             });
-            setLogged(true);
+            setToken(result.token);
             alert('Inicio de sesión exitoso');
             setFormValues({ email: '', password: '' });
             router.push("/");
@@ -108,7 +117,7 @@ export const AuthProvider = ({ children }) => {
 
     const userLogout = async () => {
         try {
-            const token = Cookies.get("coderCookieToken");
+            const tokenToUse = token || Cookies.get("coderCookieToken");
 
             const response = await fetch('/api/auth/users', {
                 method: 'DELETE',
@@ -116,13 +125,13 @@ export const AuthProvider = ({ children }) => {
                     'Content-Type': 'application/json',
                 },
                 credentials: 'include',
-                body: JSON.stringify({ token }),
+                body: JSON.stringify({ token: tokenToUse }),
             });
 
             if (response.ok) {
-                setLogged(false);
+                setToken(null);
                 Cookies.remove("coderCookieToken");
-                router.push('/'); // Redirige al usuario a la página de inicio
+                router.push('/');
             } else {
                 const errorData = await response.json();
                 alert(`Error al cerrar sesión: ${errorData.message}`);
@@ -134,7 +143,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ userRegister, userLogin, userLogout, handleChange, formValues, logged }}>
+        <AuthContext.Provider value={{ userRegister, userLogin, userLogout, handleChange, formValues, token }}>
             {children}
         </AuthContext.Provider>
     );
