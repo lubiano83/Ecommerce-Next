@@ -3,6 +3,8 @@ import React from 'react';
 import Image from 'next/image';
 import { useDarkMode } from '@/app/hooks/useDarkMode';
 import Button from '../../Button';
+import Link from 'next/link';
+import GoBack from '../../GoBack';
 
 const ProfileData = ({ item }) => {
 
@@ -32,8 +34,10 @@ const ProfileData = ({ item }) => {
         </div>
       </div>
       <div className='flex gap-2'>
-        <Button>Volver</Button>
-        <Button>Editar</Button>
+        <GoBack />
+        <Link href={"/views/auth/update"}>
+          <Button>Editar</Button>
+        </Link>
       </div>
     </div>
   );

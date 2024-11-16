@@ -3,6 +3,7 @@ import React from 'react';
 import Button from '../../Button';
 import { useDarkMode } from '@/app/hooks/useDarkMode';
 import { useAuth } from '@/app/hooks/useAuth';
+import GoBack from '../../GoBack';
 
 const LoginForm = () => {
 
@@ -31,7 +32,10 @@ const LoginForm = () => {
                     required
                     className="w-64 rounded-xl pl-2 h-8 text-gray-700"
                 />
-                <Button type="submit">Ingresar</Button>
+                <div className='flex gap-2'>
+                    <GoBack />
+                    <Button type="submit">Ingresar</Button>
+                </div>
             </form>
         </div>
     );
