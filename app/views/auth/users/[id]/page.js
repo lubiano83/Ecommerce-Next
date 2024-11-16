@@ -1,13 +1,23 @@
 import React from 'react';
-import ProfileData from '@/app/components/auth/profile/ProfileData';
+import ProfileList from '@/app/components/auth/profile/ProfileList';
+import { cookies } from 'next/headers';
+import jwt from 'jsonwebtoken';
 
-const Profile = ({ params }) => {
+const Profile = async() => {
 
-  const { id } = params;
+  const cookieStore = await cookies()
+  const coderCookieToken = cookieStore.get('coderCookieToken')?.value;
+
+  if (!coderCookieToken) {
+    throw new Error('Token no encontrado.');
+  }
+
+  const decoded = jwt.verify(coderCookieToken, process.env.COOKIE_KEY);
+  const userId = decoded.id;
 
   return (
     <div className="flex flex-col w-full justify-center items-center bg-white h-full text-gray-700 p-8">
-      <ProfileData id={id}/>
+      <ProfileList id={userId} />
     </div>
   )
 }

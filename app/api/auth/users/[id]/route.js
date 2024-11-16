@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 
 export async function GET(request, { params }) {
-    const { _id } = await params; // Captura el ID del usuario desde los parámetros de la ruta
+    const { id } = await params; // Captura el ID del usuario desde los parámetros de la ruta
 
     try {
         // Llama a la ruta de Express para obtener el usuario por ID
-        const response = await fetch(`http://localhost:8080/api/auth/users/${_id}`, {
+        const response = await fetch(`http://localhost:8080/api/auth/users/${id}`, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
