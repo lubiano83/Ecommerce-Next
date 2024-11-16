@@ -16,9 +16,9 @@ const Profile = async() => {
   const userId = decoded.id;
 
   return (
-    <div className="flex flex-col w-full justify-center items-center bg-white h-full text-gray-700 p-8">
+    <>
       <ProfileList id={userId} />
-    </div>
+    </>
   )
 }
 

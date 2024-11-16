@@ -1,10 +1,11 @@
-import React from 'react'
+import React from 'react';
+import ProfileUpdate from '@/app/components/auth/profile/ProfileUpdate';
 
 const Update = () => {
   return (
-    <div className="flex flex-col w-full justify-center items-center bg-white h-full text-gray-700 p-8">
-        Aca podres actualizar el perfil
-    </div>
+    <>
+       <ProfileUpdate />
+    </>
   )
 }
 

@@ -11,7 +11,7 @@ const ProfileData = ({ item }) => {
   const { isDarkMode } = useDarkMode();
 
   return (
-    <div className={`w-full min-w-72 p-8 gap-4 rounded-3xl flex flex-col justify-center items-center ${isDarkMode ? "bg-orange-700" : "bg-green-700"} bg-opacity-25`}>
+    <div className={`min-w-72 p-8 gap-4 rounded-3xl flex flex-col justify-center items-center ${isDarkMode ? "bg-orange-700" : "bg-green-700"} bg-opacity-25`}>
       <h1 className={`text-2xl underline ${isDarkMode ? "text-orange-700" : "text-green-700"}`}>Perfil de Usuario</h1>
       <div className='flex justify-center items-center flex-wrap gap-4'>
         <Image

@@ -2,7 +2,6 @@
 import React from 'react';
 import MenuList from './MenuList';
 import { useShow } from '@/app/hooks/useShow';
-import Image from 'next/image';
 import SvgImage from '../SvgImage';
 
 const Menu = ({ isDarkMode }) => {

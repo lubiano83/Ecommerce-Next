@@ -15,7 +15,9 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen grid grid-rows-[auto_1fr_auto] font-serif">
         <AuthProvider>
           <Navbar />
-          {children}
+          <div className="flex flex-col justify-center items-center">
+            {children}
+          </div>
           <Footer />
         </AuthProvider>
       </body>

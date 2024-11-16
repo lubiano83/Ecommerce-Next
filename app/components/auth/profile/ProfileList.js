@@ -8,9 +8,9 @@ const ProfileList = async ({ id }) => {
   const data = Array.isArray(responseToJson) ? responseToJson : [responseToJson];
 
   return (
-    <div>
+    <div className='flex justify-center items-center p-8'>
       {data.map((item) => (
-        <ProfileData key={item._id} item={item} />
+        <ProfileData key={item.id} item={item} />
       ))}
     </div>
   );

@@ -11,8 +11,8 @@ const LoginForm = () => {
     const { userLogin, handleChange, formValues } = useAuth();
 
     return (
-        <div className={`w-1/2 min-w-72 p-8 gap-4 rounded-3xl flex flex-col justify-center items-center ${isDarkMode ? "bg-orange-700" : "bg-green-700"} bg-opacity-25`}>
-            <h2 className={`text-2xl ${isDarkMode ? "text-orange-700" : "text-green-700"} underline`}>Login:</h2>
+        <div className={`min-w-72 p-8 gap-4 rounded-3xl flex flex-col justify-center items-center ${isDarkMode ? "bg-orange-700" : "bg-green-700"} bg-opacity-25`}>
+            <h2 className={`text-2xl ${isDarkMode ? "text-orange-700" : "text-green-700"} underline`}>Login</h2>
             <form onSubmit={userLogin} className="flex flex-col justify-center items-center gap-4">
                 <input
                     type="email"
