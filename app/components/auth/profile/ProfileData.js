@@ -27,7 +27,7 @@ const ProfileData = ({ id }) => {
         }
 
         const data = await response.json();
-        setProfileData(Array.isArray(data) ? data[0] : data); // Asegúrate de manejar arrays
+        setProfileData(Array.isArray(data) ? data[0] : data);
       } catch (err) {
         setError(err.message);
       }
@@ -82,16 +82,16 @@ const ProfileData = ({ id }) => {
             <strong>Email:</strong> {user.email}
           </p>
           <p>
-            <strong>Región:</strong> {user.address?.region || "Sin datos"}
+            <strong>Región:</strong> {user.address?.region}
           </p>
           <p>
-            <strong>Ciudad:</strong> {user.address?.city || "Sin datos"}
+            <strong>Ciudad:</strong> {user.address?.city}
           </p>
           <p>
-            <strong>Calle:</strong> {user.address?.street || "Sin datos"}
+            <strong>Calle:</strong> {user.address?.street}
           </p>
           <p>
-            <strong>Número:</strong> {user.address?.number || "Sin datos"}
+            <strong>Número:</strong> {user.address?.number}
           </p>
           <p>
             <strong>Creación:</strong>{" "}
@@ -105,7 +105,7 @@ const ProfileData = ({ id }) => {
       </div>
       <div className="flex gap-2">
         <Button handleClick={volver}>Volver</Button>
-        <Link href={`/views/auth/users/${user._id}/update`}>
+        <Link href={`/views/auth/profile/update`}>
           <Button>Editar</Button>
         </Link>
       </div>

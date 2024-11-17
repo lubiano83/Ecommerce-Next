@@ -1,76 +1,83 @@
 "use client";
-import React, { useState } from 'react';
-import { useDarkMode } from '@/app/hooks/useDarkMode';
-import Button from '../../Button';
-import { useRouter } from 'next/navigation';
+import React, { useState } from "react";
+import { useDarkMode } from "@/app/hooks/useDarkMode";
+import Button from "../../Button";
+import { useRouter } from "next/navigation";
 
-const ProfileUpdate = ({ id }) => {
+const ProfileUpdate = ({ id, initialData = {} }) => {
   const { isDarkMode } = useDarkMode();
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    region: "",
-    city: "",
-    address: "",
-    number: "",
+    first_name: initialData.first_name || "",
+    last_name: initialData.last_name || "",
+    region: initialData.address?.region || "",
+    city: initialData.address?.city || "",
+    street: initialData.address?.street || "",
+    number: initialData.address?.number || "",
     images: null,
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: files ? files[0] : value, // Manejo de archivos para imágenes
+      [name]: files ? files[0] : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     try {
-        const updatedData = { ...formData };
+      const updatedData = {
+        first_name: formData.first_name || initialData.first_name,
+        last_name: formData.last_name || initialData.last_name,
+        address: {
+          region: formData.region || initialData.address?.region || "",
+          city: formData.city || initialData.address?.city || "",
+          street: formData.street || initialData.address?.street || "",
+          number: formData.number || initialData.address?.number || "",
+        },
+        images: formData.images
+          ? await getBase64(formData.images)
+          : initialData.images || "",
+      };
 
-        if (formData.images) {
-            const reader = new FileReader();
-            reader.readAsDataURL(formData.images);
-            await new Promise((resolve) => {
-                reader.onload = () => {
-                    updatedData.images = reader.result;
-                    resolve();
-                };
-            });
-        }
+      const response = await fetch(`/api/auth/users/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
 
-        console.log("ID enviado:", id);
-        console.log("Datos enviados:", updatedData);
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message}`);
+        return;
+      }
 
-        const response = await fetch(`/api/auth/users/${id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedData),
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Error de la API:", errorData);
-            alert(`Error: ${errorData.message}`);
-            return;
-        }
-
-        alert("Usuario actualizado con éxito");
-        router.push(`/views/auth/users/${id}`);
+      alert("Usuario actualizado con éxito");
+      router.push(`/views/auth/profile`);
     } catch (error) {
-        console.error("Error al enviar el formulario:", error);
-        alert("Hubo un error al actualizar el usuario.");
+      console.error("Error al enviar el formulario:", error);
+      alert("Hubo un error al actualizar el usuario.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const volver = () => {
-    router.push(`/views/auth/users/${id}`);
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   return (
@@ -90,13 +97,13 @@ const ProfileUpdate = ({ id }) => {
         className="w-full flex flex-col justify-center items-center flex-wrap gap-4"
         onSubmit={handleSubmit}
       >
-        <input
+        {/* <input
           type="file"
           name="images"
           placeholder="Ingresa una imagen.."
           onChange={handleChange}
           className="w-full rounded-xl pl-2 h-8 text-gray-700"
-        />
+        /> */}
         <input
           type="text"
           name="first_name"
@@ -131,9 +138,9 @@ const ProfileUpdate = ({ id }) => {
         />
         <input
           type="text"
-          name="address"
-          placeholder="Ingresa tu dirección.."
-          value={formData.address}
+          name="street"
+          placeholder="Ingresa tu calle.."
+          value={formData.street}
           onChange={handleChange}
           className="w-full rounded-xl pl-2 h-8 text-gray-700"
         />
@@ -145,10 +152,9 @@ const ProfileUpdate = ({ id }) => {
           onChange={handleChange}
           className="w-full rounded-xl pl-2 h-8 text-gray-700"
         />
-        <div className="flex gap-2">
-          <Button handleClick={volver}>Volver</Button>
-          <Button type="submit">Aceptar</Button>
-        </div>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Procesando..." : "Aceptar"}
+        </Button>
       </form>
     </div>
   );

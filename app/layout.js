@@ -2,8 +2,6 @@ import "./globals.css";
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
 import { AuthProvider } from "./context/authContext";
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
 
 export const metadata = {
   title: "Create Next App",
@@ -11,28 +9,12 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  let userId = null;
-
-  try {
-    const cookieStore = await cookies();
-    const coderCookieToken = cookieStore.get('coderCookieToken')?.value;
-
-    if (!coderCookieToken) {
-      throw new Error('Token no encontrado. Por favor, inicia sesión.');
-    }
-
-    const decoded = jwt.verify(coderCookieToken, process.env.COOKIE_KEY);
-    userId = decoded.id;
-  } catch (error) {
-    console.error("Error al procesar el token:", error.message);
-    userId = null;
-  }
 
   return (
     <html lang="es">
       <body className="min-h-screen grid grid-rows-[auto_1fr_auto] font-serif">
         <AuthProvider>
-          <Navbar id={userId} />
+          <Navbar />
           <div className="flex flex-col justify-center items-center p-8">
             {children}
           </div>
