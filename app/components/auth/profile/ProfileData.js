@@ -1,41 +1,111 @@
 "use client";
-import React from 'react';
-import Image from 'next/image';
-import { useDarkMode } from '@/app/hooks/useDarkMode';
-import Button from '../../Button';
-import Link from 'next/link';
-import GoBack from '../../GoBack';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { useDarkMode } from "@/app/hooks/useDarkMode";
+import Button from "../../Button";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import Loading from "@/app/views/loading";
+import Error from "@/app/views/error";
 
-const ProfileData = ({ item }) => {
-
+const ProfileData = ({ id }) => {
   const { isDarkMode } = useDarkMode();
+  const router = useRouter();
+  const [profileData, setProfileData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/auth/users/${id}`,
+          { cache: "no-cache" }
+        );
+
+        if (!response.ok) {
+          throw new Error("Error al obtener los datos del perfil");
+        }
+
+        const data = await response.json();
+        setProfileData(Array.isArray(data) ? data[0] : data); // Asegúrate de manejar arrays
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    fetchProfileData();
+  }, [id]);
+
+  const volver = () => {
+    router.push("/");
+  };
+
+  if (error) {
+    return <Error/>
+  }
+
+  if (!profileData || !profileData.user) {
+    return <Loading/>
+  }
+
+  const { user } = profileData;
 
   return (
-    <div className={`min-w-72 p-8 gap-4 rounded-3xl flex flex-col justify-center items-center ${isDarkMode ? "bg-orange-700" : "bg-green-700"} bg-opacity-25`}>
-      <h1 className={`text-2xl underline ${isDarkMode ? "text-orange-700" : "text-green-700"}`}>Perfil de Usuario</h1>
-      <div className='flex justify-center items-center flex-wrap gap-4'>
+    <div
+      className={`min-w-72 p-8 gap-4 rounded-3xl flex flex-col justify-center items-center ${
+        isDarkMode ? "bg-orange-700" : "bg-green-700"
+      } bg-opacity-25`}
+    >
+      <h1
+        className={`text-2xl underline ${
+          isDarkMode ? "text-orange-700" : "text-green-700"
+        }`}
+      >
+        Perfil de Usuario
+      </h1>
+      <div className="flex justify-center items-center flex-wrap gap-4">
         <Image
           src={"/user-svgrepo-com.svg"}
           width={225}
           height={225}
           alt="profile image"
-          className='border-2 border-black rounded-xl bg-white'
+          className="border-2 border-black rounded-xl bg-white"
         />
-        <div className='flex flex-col gap-1.5 text-sm'>
-          <p><strong>Id:</strong> {item.user._id}</p>
-          <p><strong>Nombre:</strong> {item.user.first_name} {item.user.last_name}</p>
-          <p><strong>Email:</strong> {item.user.email}</p>
-          <p><strong>Región:</strong> {item.user.address.region || "Sin datos"}</p>
-          <p><strong>Ciudad:</strong> {item.user.address.city || "Sin datos"}</p>
-          <p><strong>Calle:</strong> {item.user.address.street || "Sin datos"}</p>
-          <p><strong>Número:</strong> {item.user.address.number || "Sin datos"}</p>
-          <p><strong>Creación:</strong> {new Date(item.user.createdAt || "").toDateString()}</p>
-          <p><strong>Actualización:</strong> {new Date(item.user.updatedAt || "").toDateString()}</p>
+        <div className="flex flex-col gap-1.5 text-sm">
+          <p>
+            <strong>Id:</strong> {user._id}
+          </p>
+          <p>
+            <strong>Nombre:</strong> {user.first_name} {user.last_name}
+          </p>
+          <p>
+            <strong>Email:</strong> {user.email}
+          </p>
+          <p>
+            <strong>Región:</strong> {user.address?.region || "Sin datos"}
+          </p>
+          <p>
+            <strong>Ciudad:</strong> {user.address?.city || "Sin datos"}
+          </p>
+          <p>
+            <strong>Calle:</strong> {user.address?.street || "Sin datos"}
+          </p>
+          <p>
+            <strong>Número:</strong> {user.address?.number || "Sin datos"}
+          </p>
+          <p>
+            <strong>Creación:</strong>{" "}
+            {new Date(user.createdAt || "").toDateString()}
+          </p>
+          <p>
+            <strong>Actualización:</strong>{" "}
+            {new Date(user.updatedAt || "").toDateString()}
+          </p>
         </div>
       </div>
-      <div className='flex gap-2'>
-        <GoBack />
-        <Link href={"/views/auth/update"}>
+      <div className="flex gap-2">
+        <Button handleClick={volver}>Volver</Button>
+        <Link href={`/views/auth/users/${user._id}/update`}>
           <Button>Editar</Button>
         </Link>
       </div>
