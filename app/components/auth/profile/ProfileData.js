@@ -49,6 +49,8 @@ const ProfileData = ({ id }) => {
   }
 
   const { user } = profileData;
+  console.log(user);
+  
 
   return (
     <div
@@ -65,7 +67,7 @@ const ProfileData = ({ id }) => {
       </h1>
       <div className="flex justify-center items-center flex-wrap gap-4">
         <Image
-          src={"/user-svgrepo-com.svg"}
+          src={user.images || "/user-svgrepo-com.svg"}
           width={225}
           height={225}
           alt="profile image"

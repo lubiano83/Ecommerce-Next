@@ -97,13 +97,13 @@ const ProfileUpdate = ({ id, initialData = {} }) => {
         className="w-full flex flex-col justify-center items-center flex-wrap gap-4"
         onSubmit={handleSubmit}
       >
-        {/* <input
+        <input
           type="file"
           name="images"
           placeholder="Ingresa una imagen.."
           onChange={handleChange}
           className="w-full rounded-xl pl-2 h-8 text-gray-700"
-        /> */}
+        />
         <input
           type="text"
           name="first_name"
