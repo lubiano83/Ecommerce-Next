@@ -31,36 +31,38 @@ const ProfileUpdate = ({ id, initialData = {} }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+  
     try {
-      const updatedData = {
-        first_name: formData.first_name || initialData.first_name,
-        last_name: formData.last_name || initialData.last_name,
-        address: {
-          region: formData.region || initialData.address?.region || "",
-          city: formData.city || initialData.address?.city || "",
-          street: formData.street || initialData.address?.street || "",
-          number: formData.number || initialData.address?.number || "",
-        },
-        images: formData.images
-          ? await getBase64(formData.images)
-          : initialData.images || "",
-      };
-
+      const data = new FormData();
+      data.append("first_name", formData.first_name);
+      data.append("last_name", formData.last_name);
+      data.append("region", formData.region);
+      data.append("city", formData.city);
+      data.append("street", formData.street);
+      data.append("number", formData.number);
+  
+      if (formData.images) {
+        data.append("images", formData.images);
+      } else {
+        console.warn("No image file selected.");
+      }
+  
+      // Verifica el contenido del FormData
+      for (let [key, value] of data.entries()) {
+        console.log(`${key}:`, value);
+      }
+  
       const response = await fetch(`/api/auth/users/${id}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedData),
+        body: data, // Enviar el FormData
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         alert(`Error: ${errorData.message}`);
         return;
       }
-
+  
       alert("Usuario actualizado con éxito");
       router.push(`/views/auth/profile`);
     } catch (error) {
@@ -69,16 +71,7 @@ const ProfileUpdate = ({ id, initialData = {} }) => {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const getBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
+  };  
 
   return (
     <div

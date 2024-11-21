@@ -1,18 +1,20 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import { useDarkMode } from "@/app/hooks/useDarkMode";
 import Button from "../../Button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Loading from "@/app/views/loading";
 import Error from "@/app/views/error";
+import ProfileImage from "./ProfileImage";
+import { useCapitalize } from "@/app/hooks/useCapitalize";
 
 const ProfileData = ({ id }) => {
   const { isDarkMode } = useDarkMode();
   const router = useRouter();
   const [profileData, setProfileData] = useState(null);
   const [error, setError] = useState(null);
+  const { capitalize } = useCapitalize();
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -49,8 +51,6 @@ const ProfileData = ({ id }) => {
   }
 
   const { user } = profileData;
-  console.log(user);
-  
 
   return (
     <div
@@ -66,13 +66,7 @@ const ProfileData = ({ id }) => {
         Perfil de Usuario
       </h1>
       <div className="flex justify-center items-center flex-wrap gap-4">
-        <Image
-          src={user.images || "/user-svgrepo-com.svg"}
-          width={225}
-          height={225}
-          alt="profile image"
-          className="border-2 border-black rounded-xl bg-white"
-        />
+        <ProfileImage imageUrl={user.images} />
         <div className="flex flex-col gap-1.5 text-sm">
           <p>
             <strong>Id:</strong> {user._id}
@@ -84,13 +78,13 @@ const ProfileData = ({ id }) => {
             <strong>Email:</strong> {user.email}
           </p>
           <p>
-            <strong>Región:</strong> {user.address?.region}
+            <strong>Región:</strong> {capitalize(user.address?.region)}
           </p>
           <p>
-            <strong>Ciudad:</strong> {user.address?.city}
+            <strong>Ciudad:</strong> {capitalize(user.address?.city)}
           </p>
           <p>
-            <strong>Calle:</strong> {user.address?.street}
+            <strong>Calle:</strong> {capitalize(user.address?.street)}
           </p>
           <p>
             <strong>Número:</strong> {user.address?.number}
