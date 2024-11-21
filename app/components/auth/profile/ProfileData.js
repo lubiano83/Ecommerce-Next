@@ -66,7 +66,7 @@ const ProfileData = ({ id }) => {
         Perfil de Usuario
       </h1>
       <div className="flex justify-center items-center flex-wrap gap-4">
-        <ProfileImage imageUrl={user.images} />
+        <ProfileImage imageUrl={user.images ?? "/user-svgrepo-com.svg"} />
         <div className="flex flex-col gap-1.5 text-sm">
           <p>
             <strong>Id:</strong> {user._id}
