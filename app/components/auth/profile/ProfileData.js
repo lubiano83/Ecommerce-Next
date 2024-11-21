@@ -78,7 +78,7 @@ const ProfileData = ({ id }) => {
             <strong>Email:</strong> {user.email}
           </p>
           <p>
-            <strong>Phone:</strong> {user.phone}
+            <strong>Celular:</strong> {user.phone}
           </p>
           <p>
             <strong>Región:</strong> {capitalize(user.address?.region)}
