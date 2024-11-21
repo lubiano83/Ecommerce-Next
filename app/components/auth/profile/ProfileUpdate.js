@@ -11,6 +11,7 @@ const ProfileUpdate = ({ id, initialData = {} }) => {
   const [formData, setFormData] = useState({
     first_name: initialData.first_name || "",
     last_name: initialData.last_name || "",
+    phone: initialData.phone || "",
     region: initialData.address?.region || "",
     city: initialData.address?.city || "",
     street: initialData.address?.street || "",
@@ -36,6 +37,7 @@ const ProfileUpdate = ({ id, initialData = {} }) => {
       const data = new FormData();
       data.append("first_name", formData.first_name);
       data.append("last_name", formData.last_name);
+      data.append("phone", formData.phone);
       data.append("region", formData.region);
       data.append("city", formData.city);
       data.append("street", formData.street);
@@ -104,6 +106,7 @@ const ProfileUpdate = ({ id, initialData = {} }) => {
           value={formData.first_name}
           onChange={handleChange}
           className="w-full rounded-xl pl-2 h-8 text-gray-700"
+          required
         />
         <input
           type="text"
@@ -112,7 +115,29 @@ const ProfileUpdate = ({ id, initialData = {} }) => {
           value={formData.last_name}
           onChange={handleChange}
           className="w-full rounded-xl pl-2 h-8 text-gray-700"
+          required
         />
+        <div className="w-full flex items-center gap-2 rounded-xl pl-2 h-8 text-gray-700 bg-white">
+          <span className="text-gray-500">+56</span>
+          <input
+            type="text"
+            name="phone"
+            placeholder="Ingresa tu número (ej: 912345678)"
+            value={formData.phone.replace("+56", "")}
+            onChange={(e) => {
+              const inputValue = e.target.value.replace(/[^0-9]/g, "");
+              if (inputValue.length <= 9) {
+                setFormData((prevData) => ({
+                  ...prevData,
+                  phone: `+56${inputValue}`,
+                }));
+              }
+            }}
+            maxLength={9}
+            className="flex-1 border-none focus:outline-none text-gray-700"
+            required
+          />
+        </div>
         <input
           type="text"
           name="region"
@@ -120,6 +145,7 @@ const ProfileUpdate = ({ id, initialData = {} }) => {
           value={formData.region}
           onChange={handleChange}
           className="w-full rounded-xl pl-2 h-8 text-gray-700"
+          required
         />
         <input
           type="text"
@@ -128,6 +154,7 @@ const ProfileUpdate = ({ id, initialData = {} }) => {
           value={formData.city}
           onChange={handleChange}
           className="w-full rounded-xl pl-2 h-8 text-gray-700"
+          required
         />
         <input
           type="text"
@@ -136,6 +163,7 @@ const ProfileUpdate = ({ id, initialData = {} }) => {
           value={formData.street}
           onChange={handleChange}
           className="w-full rounded-xl pl-2 h-8 text-gray-700"
+          required
         />
         <input
           type="text"
@@ -144,6 +172,7 @@ const ProfileUpdate = ({ id, initialData = {} }) => {
           value={formData.number}
           onChange={handleChange}
           className="w-full rounded-xl pl-2 h-8 text-gray-700"
+          required
         />
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Procesando..." : "Aceptar"}

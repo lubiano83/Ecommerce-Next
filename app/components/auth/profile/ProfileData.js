@@ -67,7 +67,7 @@ const ProfileData = ({ id }) => {
       </h1>
       <div className="flex justify-center items-center flex-wrap gap-4">
         <ProfileImage imageUrl={user.images ?? "/user-svgrepo-com.svg"} />
-        <div className="flex flex-col gap-1.5 text-sm">
+        <div className="flex flex-col gap-0.5 text-sm">
           <p>
             <strong>Id:</strong> {user._id}
           </p>
@@ -76,6 +76,9 @@ const ProfileData = ({ id }) => {
           </p>
           <p>
             <strong>Email:</strong> {user.email}
+          </p>
+          <p>
+            <strong>Phone:</strong> {user.phone}
           </p>
           <p>
             <strong>Región:</strong> {capitalize(user.address?.region)}
