@@ -125,11 +125,21 @@ const ProfileUpdate = ({ id, initialData = {} }) => {
             placeholder="Ingresa tu número (ej: 912345678)"
             value={formData.phone.replace("+56", "")}
             onChange={(e) => {
-              const inputValue = e.target.value.replace(/[^0-9]/g, "");
+              const inputValue = e.target.value.replace(/[^0-9]/g, ""); // Solo permite números
               if (inputValue.length <= 9) {
                 setFormData((prevData) => ({
                   ...prevData,
                   phone: `+56${inputValue}`,
+                }));
+              }
+            }}
+            onBlur={(e) => {
+              const inputValue = e.target.value.replace("+56", "");
+              if (inputValue.length !== 9) {
+                alert("El número debe tener exactamente 9 dígitos.");
+                setFormData((prevData) => ({
+                  ...prevData,
+                  phone: "+56", // Resetea al prefijo si el número no es válido
                 }));
               }
             }}
