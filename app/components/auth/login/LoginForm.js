@@ -6,14 +6,19 @@ import { useAuth } from '@/app/hooks/useAuth';
 import GoBack from '../../GoBack';
 
 const LoginForm = () => {
-
     const { isDarkMode } = useDarkMode();
     const { userLogin, handleChange, formValues } = useAuth();
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const { email, password } = formValues;
+        await userLogin(email, password);
+    };
 
     return (
         <div className={`min-w-72 p-8 gap-4 rounded-3xl flex flex-col justify-center items-center ${isDarkMode ? "bg-orange-700" : "bg-green-700"} bg-opacity-25`}>
             <h2 className={`text-2xl ${isDarkMode ? "text-orange-700" : "text-green-700"} underline`}>Login</h2>
-            <form onSubmit={userLogin} className="flex flex-col justify-center items-center gap-4">
+            <form onSubmit={handleSubmit} className="flex flex-col justify-center items-center gap-4">
                 <input
                     type="email"
                     name="email"
